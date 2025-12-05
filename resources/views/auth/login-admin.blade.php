@@ -60,7 +60,7 @@
                                         </div>
                                     @endif
 
-                                   <form class="user" method="POST" action="{{ route('admin.login.post') }}">
+                                   <form class="user" method="POST" action="{{ route('admin.login') }}">
     @csrf
     
     <div class="form-group">

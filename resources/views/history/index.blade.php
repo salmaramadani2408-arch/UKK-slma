@@ -11,7 +11,7 @@
     <!-- DataTales Example -->
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Data History Surat</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Data History Surat Disposisi</h6>
         </div>
         <div class="card-body">
 
@@ -21,24 +21,43 @@
                         <tr>
                             <th>No</th>
                             <th>Nomor Surat</th>
+                            <th>SKPD</th>
                             <th>Perihal</th>
-                            <th>Tanggal</th>
+                            <th>Tgl Surat</th>
+                            <th>Diteruskan Ke</th>
+                            <th>Dikirim Oleh</th>
                             <th>Status</th>
-                            <th>Catatan</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <?php $no = 1 ?>
-                        @foreach($history as $row)
+                        @forelse($history as $index => $row)
                         <tr>
-                            <td>{{$no++}}</td>
-                            <td>{{$row->nomorsurat}}</td>
-                            <td>{{$row->perihal}}</td>
-                            <td>{{$row->tanggal}}</td>
-                            <td>{{$row->status}}</td>
-                            <td>{{$row->catatan}}</td>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $row->nomorsurat }}</td>
+                            <td>{{ $row->skpd }}</td>
+                            <td>{{ $row->Perihal }}</td>
+                            <td>{{ $row->Tgl_Surat ? $row->Tgl_Surat->format('d/m/Y') : '-' }}</td>
+                            <td>{{ $row->Diteruskan_Ke }}</td>
+                            <td>{{ $row->dikirim_oleh ?? 'Admin' }}</td>
+                            <td>
+                                @if($row->status == 'selesai')
+                                    <span class="badge badge-success">Selesai</span>
+                                @elseif($row->status == 'diterima')
+                                    <span class="badge badge-info">Diterima</span>
+                                @elseif($row->status == 'terkirim')
+                                    <span class="badge badge-warning">Terkirim</span>
+                                @else
+                                    <span class="badge badge-secondary">{{ $row->status }}</span>
+                                @endif
+                            </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="8" class="text-center text-muted">
+                                <i class="fas fa-inbox"></i> Belum ada history surat
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>

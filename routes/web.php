@@ -6,49 +6,53 @@ use App\Http\Controllers\DisposisiController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\KabanController;
 
-// Pemanggilan halaman utama (landing page)
 Route::get('/', function () {
     return view('landing');
 })->name('welcome');
 
-// Admin autentikasi admin
-Route::prefix('admin')->name('admin.')->group(function () {
-    // Login Form & Process
-    Route::get('/login', [AuthController::class, 'showAdminLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'adminLogin'])->name('login.post');
-});
+Route::get('/login', function () {
+    return redirect()->route('admin.login');
+})->name('login');
 
-// login autentikasi kaban
-Route::prefix('kaban')->name('kaban.')->group(function () {
-    // Login Form & Process
-    Route::get('/login', [AuthController::class, 'showKabanLogin'])->name('login');
-    Route::post('/login', [AuthController::class, 'kabanLogin'])->name('login.post');
-});
+// Admin Login
+Route::get('/admin/login', [AuthController::class, 'showAdminLogin'])->name('admin.login');
+Route::post('/admin/login', [AuthController::class, 'adminLogin']);
 
-// proteksi admin
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Dashboard Admin dan menu menu nya
+// Kaban Login
+Route::get('/kaban/login', [AuthController::class, 'showKabanLogin'])->name('kaban.login');
+Route::post('/kaban/login', [AuthController::class, 'kabanLogin']);
+
+// Admin Routes
+Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard'); 
+        return view('dashboard');
     })->name('dashboard');
 
-    Route::resource('disposisi', DisposisiController::class);
+    Route::get('/disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
+    Route::get('/disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
+    Route::post('/disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
+   Route::get('/disposisi/{nomorsurat}/edit', [DisposisiController::class, 'edit'])
+    ->where('nomorsurat', '.*')
+    ->name('disposisi.edit');
+Route::put('/disposisi/{nomorsurat}', [DisposisiController::class, 'update'])
+    ->where('nomorsurat', '.*')
+    ->name('disposisi.update');
+Route::delete('/disposisi/{nomorsurat}', [DisposisiController::class, 'destroy'])
+    ->where('nomorsurat', '.*')
+    ->name('disposisi.destroy');
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
-    
-    // Logout admin
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-// proteksi kaban
-Route::middleware(['auth', 'role:kaban'])->prefix('kaban')->name('kaban.')->group(function () {
-    // Dashboard Kaban dan menu nya
+// Kaban Routes
+Route::prefix('kaban')->middleware('auth')->name('kaban.')->group(function () {
     Route::get('/dashboard', [KabanController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/suratmasuk', [KabanController::class, 'suratmasuk'])->name('suratmasuk');
     Route::get('/suratmasuk/{nomorsurat}', [KabanController::class, 'show'])->name('suratmasuk.show');
     Route::get('/suratmasuk/{nomorsurat}/edit', [KabanController::class, 'edit'])->name('suratmasuk.edit');
     Route::put('/suratmasuk/{nomorsurat}', [KabanController::class, 'update'])->name('suratmasuk.update');
-    
-    // Logout kaban
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

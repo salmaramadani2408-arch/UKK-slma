@@ -2,7 +2,6 @@
 
 @section('content')
 
-<!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">
         <i class="fas fa-edit text-warning"></i> Edit Surat Disposisi
@@ -12,7 +11,8 @@
     </a>
 </div>
 
-<form action="{{ route('admin.disposisi.update', $disposisi->nomorsurat) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('admin.disposisi.update', urlencode($disposisi->nomorsurat)) }}" 
+      method="POST" enctype="multipart/form-data">
     @csrf
     @method('PUT')
 
@@ -24,16 +24,13 @@
         </div>
 
         <div class="card-body">
-            <!-- Alert Info -->
             <div class="alert alert-warning mb-4">
                 <i class="fas fa-exclamation-triangle"></i> 
                 <strong>Perhatian:</strong> Pastikan data yang Anda edit sudah benar!
             </div>
 
             <div class="row">
-                <!-- Kolom Kiri -->
                 <div class="col-md-6">
-                    <!-- Nomor Surat -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Nomor Surat <span class="text-danger">*</span>
@@ -42,14 +39,12 @@
                                class="form-control @error('nomor_surat') is-invalid @enderror" 
                                name="nomor_surat" 
                                value="{{ old('nomor_surat', $disposisi->nomorsurat) }}" 
-                               placeholder="Contoh: 800.1.5.3"
                                required>
                         @error('nomor_surat')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- SKPD -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             SKPD <span class="text-danger">*</span>
@@ -58,14 +53,12 @@
                                class="form-control @error('skpd') is-invalid @enderror" 
                                name="skpd" 
                                value="{{ old('skpd', $disposisi->skpd) }}" 
-                               placeholder="Contoh: Kec Cilawu"
                                required>
                         @error('skpd')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Tanggal Surat -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Tanggal Surat <span class="text-danger">*</span>
@@ -80,7 +73,6 @@
                         @enderror
                     </div>
 
-                    <!-- Tanggal Diterima -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Tanggal Diterima <span class="text-danger">*</span>
@@ -95,7 +87,6 @@
                         @enderror
                     </div>
 
-                    <!-- Nomor Agenda -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Nomor Agenda <span class="text-danger">*</span>
@@ -104,7 +95,6 @@
                                class="form-control @error('no_agenda') is-invalid @enderror" 
                                name="no_agenda" 
                                value="{{ old('no_agenda', $disposisi->No_Agenda) }}" 
-                               placeholder="Contoh: AG-001/2025"
                                required>
                         @error('no_agenda')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -112,9 +102,7 @@
                     </div>
                 </div>
 
-                <!-- Kolom Kanan -->
                 <div class="col-md-6">
-                    <!-- Perihal -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Perihal <span class="text-danger">*</span>
@@ -122,14 +110,12 @@
                         <textarea class="form-control @error('perihal') is-invalid @enderror" 
                                   name="perihal" 
                                   rows="4" 
-                                  placeholder="Masukkan perihal surat..."
                                   required>{{ old('perihal', $disposisi->Perihal ?? $disposisi->perihal) }}</textarea>
                         @error('perihal')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
 
-                    <!-- Sifat Surat -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Sifat Surat <span class="text-danger">*</span>
@@ -160,7 +146,6 @@
                     </div>
                     @endif
 
-                    <!-- Upload Dokumen Baru -->
                     <div class="form-group">
                         <label class="font-weight-bold">
                             Upload Dokumen Baru (PDF) <span class="text-muted">(Opsional)</span>
@@ -198,7 +183,6 @@
     </div>
 </form>
 
-<!-- Script untuk menampilkan nama file yang dipilih -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     var fileInput = document.querySelector('.custom-file-input');

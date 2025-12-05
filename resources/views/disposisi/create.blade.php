@@ -44,7 +44,6 @@
                                class="form-control @error('nomor_surat') is-invalid @enderror" 
                                name="nomor_surat" 
                                value="{{ old('nomor_surat') }}" 
-                               placeholder="Contoh: 800.1.5.3"
                                required>
                         @error('nomor_surat')
                             <div class="invalid-feedback">{{ $message }}</div>
@@ -176,12 +175,12 @@
 
             <hr class="my-4">
 
-           <!-- Buttons -->
+          <!-- Buttons -->
 <div class="form-group mb-0">
-    <button type="submit" name="action" value="save" class="btn btn-secondary btn-lg px-5">
+    <button type="submit" name="action" value="save" class="btn btn-primary btn-lg px-5">
         <i class="fas fa-save"></i> Simpan
     </button>
-    <button type="submit" name="action" value="send" class="btn btn-primary btn-lg px-5">
+    <button type="submit" name="action" value="send" class="btn btn-success btn-lg px-5">
         <i class="fas fa-paper-plane"></i> Kirim
     </button>
 </div>

@@ -2,12 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\HistoryDisposisi;
 
 class HistoryController extends Controller
 {
     public function index()
     {
-        return view('history.index');
+        $history = HistoryDisposisi::with('disposisi')
+                                   ->latest()
+                                   ->get();
+        
+        return view('history.index', compact('history'));
     }
 }

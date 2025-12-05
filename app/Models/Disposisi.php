@@ -9,29 +9,42 @@ class Disposisi extends Model
 {
     use HasFactory;
 
+    // Nama tabel SESUAI database (tanpa underscore)
     protected $table = 'disposisi';
-    protected $primaryKey = 'nomorsurat'; 
-    protected $keyType = 'string'; 
-    public $incrementing = false;
-    public $timestamps = true;  
     
+    // Primary key adalah nomorsurat (varchar, bukan auto increment)
+    protected $primaryKey = 'nomorsurat';
+    
+    // Key type string (karena nomorsurat adalah varchar)
+    protected $keyType = 'string';
+    
+    // Tidak auto increment (karena nomorsurat diisi manual)
+    public $incrementing = false;
+    
+    // Timestamps
+    public $timestamps = true;
+    
+    // Fillable fields (SESUAI struktur database)
     protected $fillable = [
         'nomorsurat',
-        'skpd', 
-        'Tgl_Surat', 
-        'Perihal', 
-        'Tgl_Diterima', 
-        'No_Agenda', 
-        'Sifat', 
-        'Dokumen', 
-        'Diteruskan_Ke', 
+        'skpd',
+        'Tgl_Surat',
+        'Perihal',          // Huruf besar 'P'
+        'Tgl_Diterima',
+        'No_Agenda',
+        'Sifat',
+        'Dokumen',
+        'Diteruskan_Ke',
         'status',
-        'dengan_hormat_harap',
-        'catatan'
+        'dengan_hormat_harap',  // lowercase dengan underscore
+        'catatan'               // lowercase
     ];
 
+    // Date casting
     protected $casts = [
         'Tgl_Surat' => 'date',
         'Tgl_Diterima' => 'date',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 }
