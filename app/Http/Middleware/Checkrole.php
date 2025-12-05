@@ -9,36 +9,39 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CheckRole
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle(Request $request, Closure $next, string $role): Response
     {
-        // Cek apakah user sudah login
-        if (!Auth::check()) {
-            return redirect()->route('welcome')
+        // Tentukan guard berdasarkan role
+        $guard = $this->getGuardByRole($role);
+
+        // Cek apakah user sudah login dengan guard yang tepat
+        if (!Auth::guard($guard)->check()) {
+            return redirect()->route($role . '.login')
                 ->with('error', 'Silakan login terlebih dahulu.');
         }
 
         // Cek apakah role user sesuai
-        if (Auth::user()->role !== $role) {
-            // Jika tidak sesuai, redirect ke dashboard mereka
-            if (Auth::user()->role === 'admin') {
-                return redirect()->route('dashboard')
-                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-            } elseif (Auth::user()->role === 'kaban') {
-                return redirect()->route('kaban.dashboard')
-                    ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
-            }
-            
-            // Fallback logout jika role tidak dikenali
-            Auth::logout();
-            return redirect()->route('welcome')
-                ->with('error', 'Role tidak valid.');
+        $user = Auth::guard($guard)->user();
+        
+        if ($user->role !== $role) {
+            // Redirect ke dashboard sesuai role mereka
+            $userRole = $user->role;
+            return redirect()->route($userRole . '.dashboard')
+                ->with('error', 'Anda tidak memiliki akses ke halaman tersebut.');
         }
 
         return $next($request);
+    }
+
+    /**
+     * Tentukan guard berdasarkan role
+     */
+    private function getGuardByRole(string $role): string
+    {
+        return match($role) {
+            'admin' => 'web',
+            'kaban' => 'kaban',
+            default => 'web',
+        };
     }
 }

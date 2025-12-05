@@ -71,7 +71,7 @@
 
                     <!-- Card Admin -->
                     <div class="col-lg-6 mb-4">
-                        <a href="{{ route('login.admin') }}" class="text-decoration-none">
+                        <a href="{{ route('admin.login') }}" class="text-decoration-none">
                             <div class="card card-login border-0">
                                 <div class="card-body p-5 text-center">
                                     <div class="icon-circle bg-gradient-admin text-white">
@@ -94,7 +94,7 @@
 
                     <!-- Card Kaban/Pimpinan -->
                     <div class="col-lg-6 mb-4">
-                        <a href="{{ route('login.kaban') }}" class="text-decoration-none">
+                        <a href="{{ route('kaban.login') }}" class="text-decoration-none">
                             <div class="card card-login border-0">
                                 <div class="card-body p-5 text-center">
                                     <div class="icon-circle bg-gradient-kaban text-white">

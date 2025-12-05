@@ -60,9 +60,9 @@
                                         </div>
                                     @endif
 
-                                    <form class="user" method="POST" action="{{ route('login.post') }}">
+                                    <form class="user" method="POST" action="{{ route('kaban.login.post') }}">
                                         @csrf
-                                        <input type="hidden" name="role" value="kaban">
+                            
                                         
                                         <div class="form-group">
                                             <input type="email" 

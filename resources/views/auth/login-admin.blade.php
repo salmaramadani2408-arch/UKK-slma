@@ -60,49 +60,48 @@
                                         </div>
                                     @endif
 
-                                    <form class="user" method="POST" action="{{ route('login.post') }}">
-                                        @csrf
-                                        <input type="hidden" name="role" value="admin">
-                                        
-                                        <div class="form-group">
-                                            <input type="email" 
-                                                   class="form-control form-control-user @error('email') is-invalid @enderror" 
-                                                   id="exampleInputEmail" 
-                                                   name="email"
-                                                   placeholder="Email Address"
-                                                   value="{{ old('email') }}"
-                                                   required 
-                                                   autofocus>
-                                            @error('email')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <input type="password" 
-                                                   class="form-control form-control-user @error('password') is-invalid @enderror" 
-                                                   id="exampleInputPassword" 
-                                                   name="password"
-                                                   placeholder="Password"
-                                                   required>
-                                            @error('password')
-                                                <span class="invalid-feedback" role="alert">
-                                                    <strong>{{ $message }}</strong>
-                                                </span>
-                                            @enderror
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="custom-control custom-checkbox small">
-                                                <input type="checkbox" class="custom-control-input" id="customCheck" name="remember">
-                                                <label class="custom-control-label" for="customCheck">Ingat Saya</label>
-                                            </div>
-                                        </div>
-                                        <button type="submit" class="btn btn-primary btn-user btn-block">
-                                            <i class="fas fa-sign-in-alt mr-2"></i>
-                                            Login
-                                        </button>
-                                    </form>
+                                   <form class="user" method="POST" action="{{ route('admin.login.post') }}">
+    @csrf
+    
+    <div class="form-group">
+        <input type="email" 
+               class="form-control form-control-user @error('email') is-invalid @enderror" 
+               id="exampleInputEmail" 
+               name="email"
+               placeholder="Email Address"
+               value="{{ old('email') }}"
+               required 
+               autofocus>
+        @error('email')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
+    </div>
+    <div class="form-group">
+        <input type="password" 
+               class="form-control form-control-user @error('password') is-invalid @enderror" 
+               id="exampleInputPassword" 
+               name="password"
+               placeholder="Password"
+               required>
+        @error('password')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
+    </div>
+    <div class="form-group">
+        <div class="custom-control custom-checkbox small">
+            <input type="checkbox" class="custom-control-input" id="customCheck" name="remember">
+            <label class="custom-control-label" for="customCheck">Ingat Saya</label>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        <i class="fas fa-sign-in-alt mr-2"></i>
+        Login
+    </button>
+</form>
                                     <hr>
                                     <div class="text-center">
                                         <a class="small" href="{{ route('welcome') }}">
