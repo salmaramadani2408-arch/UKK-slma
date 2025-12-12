@@ -110,6 +110,9 @@
     <!-- Page level custom scripts -->
     <script src="{{asset('js/demo/datatables-demo.js')}}"></script>
 
+    <!-- TAMBAHKAN INI: Stack untuk script tambahan dari halaman lain -->
+    @stack('scripts')
+
 </body>
 
 </html>
