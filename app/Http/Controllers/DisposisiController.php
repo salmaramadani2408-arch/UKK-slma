@@ -41,7 +41,7 @@ class DisposisiController extends Controller
             $file->move(public_path('uploads/disposisi'), $filename);
         }
 
-        // Simpan ke tabel disposisi
+        // ✅ HANYA simpan ke tabel disposisi dengan status 'pending'
         Disposisi::create([
             'nomorsurat' => $request->nomor_surat,
             'skpd' => $request->skpd,
@@ -55,23 +55,8 @@ class DisposisiController extends Controller
             'status' => 'pending',
         ]);
 
-        // ✅ OTOMATIS SIMPAN KE HISTORY
-        HistoryDisposisi::create([
-            'nomorsurat' => $request->nomor_surat,
-            'skpd' => $request->skpd,
-            'Tgl_Surat' => $request->tgl_surat,
-            'Tgl_Diterima' => $request->tgl_diterima,
-            'Perihal' => $request->perihal,
-            'No_Agenda' => $request->no_agenda,
-            'Sifat' => $request->sifat,
-            'Dokumen' => $filename,
-            'Diteruskan_Ke' => 'Kepala Badan',
-            'status' => 'terkirim', // ✅ Sesuaikan dengan enum di migration
-            'dikirim_oleh' => Auth::user()->name, // ✅ Tambahkan info pengirim
-        ]);
-
         return redirect()->route('admin.disposisi.index')
-            ->with('success', 'Data disposisi berhasil dikirim ke Kepala Badan dan tersimpan di history!');
+            ->with('success', 'Data disposisi berhasil disimpan!');
     }
 
     public function edit($nomorsurat)
@@ -86,7 +71,7 @@ class DisposisiController extends Controller
         $nomorsurat = urldecode($nomorsurat);
         
         $request->validate([
-            'nomor_surat' => 'required|string|max:255',
+            'nomor_surat' => 'required|string|max:255|unique:disposisi,nomorsurat,' . $nomorsurat . ',nomorsurat',
             'skpd' => 'required|string|max:255',
             'tgl_surat' => 'required|date',
             'tgl_diterima' => 'required|date',
@@ -97,6 +82,9 @@ class DisposisiController extends Controller
         ]);
 
         $disposisi = Disposisi::where('nomorsurat', $nomorsurat)->firstOrFail();
+        
+        // Simpan nomor surat lama
+        $nomorsuratLama = $disposisi->nomorsurat;
         
         // Handle file upload jika ada file baru
         if ($request->hasFile('dokumen')) {
@@ -123,11 +111,52 @@ class DisposisiController extends Controller
         
         $disposisi->save();
 
-        // ✅ OPSIONAL: Update history juga jika diperlukan
-        // HistoryDisposisi::where('nomorsurat', $nomorsurat)->update([...]);
+        // ✅ Update history jika nomor surat berubah DAN data sudah ada di history
+        if ($nomorsuratLama !== $request->nomor_surat) {
+            HistoryDisposisi::where('nomorsurat', $nomorsuratLama)
+                ->update(['nomorsurat' => $request->nomor_surat]);
+        }
 
         return redirect()->route('admin.disposisi.index')
             ->with('success', 'Data disposisi berhasil diupdate!');
+    }
+
+    // ✅ TAMBAHKAN METHOD KIRIM (INI YANG PENTING!)
+    public function kirim($nomorsurat)
+    {
+        $nomorsurat = urldecode($nomorsurat);
+        
+        // Ambil data disposisi
+        $disposisi = Disposisi::where('nomorsurat', $nomorsurat)->firstOrFail();
+        
+        // Cek apakah sudah ada di history
+        $sudahAda = HistoryDisposisi::where('nomorsurat', $nomorsurat)->exists();
+        
+        if ($sudahAda) {
+            return redirect()->route('admin.disposisi.index')
+                ->with('error', 'Surat ini sudah ada di history!');
+        }
+        
+        // ✅ Simpan ke history_disposisi
+        HistoryDisposisi::create([
+            'nomorsurat' => $disposisi->nomorsurat,
+            'skpd' => $disposisi->skpd,
+            'Tgl_Surat' => $disposisi->Tgl_Surat,
+            'Tgl_Diterima' => $disposisi->Tgl_Diterima,
+            'Perihal' => $disposisi->Perihal,
+            'No_Agenda' => $disposisi->No_Agenda,
+            'Sifat' => $disposisi->Sifat,
+            'Dokumen' => $disposisi->Dokumen,
+            'Diteruskan_Ke' => $disposisi->Diteruskan_Ke,
+            'status' => 'terkirim',
+        ]);
+        
+        // ✅ Update status di disposisi (JANGAN DIHAPUS, biarkan tetap ada)
+        $disposisi->status = 'terkirim';
+        $disposisi->save();
+        
+        return redirect()->route('admin.disposisi.index')
+            ->with('success', 'Surat berhasil dikirim ke history!');
     }
 
     public function destroy($nomorsurat)

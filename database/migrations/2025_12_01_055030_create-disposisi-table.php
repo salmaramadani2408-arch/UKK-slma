@@ -20,7 +20,7 @@ return new class extends Migration
             
             // Kolom untuk Kaban
             $table->string('Diteruskan_Ke')->nullable();
-            $table->enum('status', ['pending', 'di_kaban', 'selesai'])->default('pending');
+            $table->enum('status', ['pending', 'di_kaban', 'terkirim', 'selesai'])->default('pending');
             $table->text('dengan_hormat_harap')->nullable();
             $table->text('catatan')->nullable();
             

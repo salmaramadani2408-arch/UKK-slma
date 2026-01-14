@@ -60,7 +60,7 @@
                                         </div>
                                     @endif
 
-                                    <form class="user" method="POST" action="{{ route('kaban.login.post') }}">
+                                   <form class="user" method="POST" action="{{ url('/kaban/login') }}">
                                         @csrf
                             
                                         

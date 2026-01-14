@@ -180,9 +180,9 @@
                                     <span class="text-muted">-</span>
                                 @endif
                             </td>
-                            <td onclick="event.stopPropagation();">
+                            <td>
                                 @if($item->Dokumen)
-                                    <a href="{{ asset('uploads/disposisi/' . $item->Dokumen) }}" target="_blank" class="btn btn-sm btn-info">
+                                    <a href="{{ asset('uploads/disposisi/' . $item->Dokumen) }}" target="_blank" class="btn btn-sm btn-info" onclick="event.stopPropagation();">
                                         <i class="fas fa-file-pdf"></i> Lihat
                                     </a>
                                 @else
@@ -257,56 +257,80 @@
 
 @endsection
 
+@push('scripts')
 <script>
-// Tunggu sampai semua script selesai load
-jQuery(document).ready(function($) {
-    console.log('Script loaded'); // Debug
+$(document).ready(function() {
+    console.log('=== Script Loaded ===');
     
-    // Tunggu DataTable selesai render
-    setTimeout(function() {
-        console.log('Rows found:', $('.row-clickable').length); // Debug
+    // Cek apakah DataTable sudah ada
+    if ($.fn.DataTable.isDataTable('#dataTable')) {
+        console.log('DataTable sudah ada, destroy dulu');
+        $('#dataTable').DataTable().destroy();
+    }
+    
+    // Inisialisasi DataTable
+    var table = $('#dataTable').DataTable({
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json"
+        },
+        "order": [[0, "asc"]],
+        "pageLength": 10,
+        "drawCallback": function() {
+            console.log('DataTable rendered, rows:', $('.row-clickable').length);
+        }
+    });
+    
+    console.log('DataTable initialized');
+    
+    // Event handler untuk klik baris
+    $('#dataTable tbody').on('click', 'tr.row-clickable', function(e) {
+        // Jangan trigger kalau yang diklik adalah link/button
+        if ($(e.target).is('a') || $(e.target).closest('a').length > 0) {
+            console.log('Clicked on link, ignoring...');
+            return;
+        }
         
-        // Handle row click dengan event delegation
-        $('#dataTable tbody').on('click', 'tr.row-clickable', function() {
-            var nomor = $(this).data('nomor');
-            var skpd = $(this).data('skpd');
-            var perihal = $(this).data('perihal');
-            var tglSurat = $(this).data('tgl-surat');
-            var editUrl = $(this).data('edit-url');
-            var deleteUrl = $(this).data('delete-url');
-            
-            console.log('Row clicked:', nomor); // Debug
-            
-            // Set data ke modal
-            $('#modal-nomor').text(nomor);
-            $('#modal-skpd').text(skpd);
-            $('#modal-perihal').text(perihal);
-            $('#modal-tgl').text(tglSurat);
-            
-            // Set URL untuk tombol
-            $('#btn-edit-modal').attr('href', editUrl);
-            $('#delete-form').attr('action', deleteUrl);
-            
-            // Simpan nomor surat untuk konfirmasi hapus
-            $('#btn-delete-modal').data('nomor', nomor);
-            
-            // Tampilkan modal
-            $('#actionModal').modal('show');
-        });
+        var $row = $(this);
+        var nomor = $row.data('nomor');
+        var skpd = $row.data('skpd');
+        var perihal = $row.data('perihal');
+        var tglSurat = $row.data('tgl-surat');
+        var editUrl = $row.data('edit-url');
+        var deleteUrl = $row.data('delete-url');
         
-        // Handle delete button
-        $('#btn-delete-modal').on('click', function() {
-            var nomor = $(this).data('nomor');
-            
-            if(confirm('Yakin ingin menghapus surat ' + nomor + '?')) {
-                $('#delete-form').submit();
-            }
-        });
+        console.log('=== Row Clicked ===');
+        console.log('Nomor:', nomor);
+        console.log('SKPD:', skpd);
+        console.log('Edit URL:', editUrl);
+        console.log('Delete URL:', deleteUrl);
         
-        // Prevent event bubbling untuk link dokumen
-        $('#dataTable tbody').on('click', 'a.btn-info', function(e) {
-            e.stopPropagation();
-        });
-    }, 500); // Tunggu 500ms untuk DataTable selesai render
+        // Set data ke modal
+        $('#modal-nomor').text(nomor);
+        $('#modal-skpd').text(skpd);
+        $('#modal-perihal').text(perihal);
+        $('#modal-tgl').text(tglSurat);
+        
+        // Set URL untuk tombol
+        $('#btn-edit-modal').attr('href', editUrl);
+        $('#delete-form').attr('action', deleteUrl);
+        $('#btn-delete-modal').data('nomor', nomor);
+        
+        // Tampilkan modal
+        console.log('Showing modal...');
+        $('#actionModal').modal('show');
+    });
+    
+    // Handle delete button
+    $('#btn-delete-modal').on('click', function() {
+        var nomor = $(this).data('nomor');
+        
+        if (confirm('Apakah Anda yakin ingin menghapus surat nomor: ' + nomor + '?')) {
+            console.log('Deleting:', nomor);
+            $('#delete-form').submit();
+        }
+    });
+    
+    console.log('=== Event Handlers Registered ===');
 });
 </script>
+@endpush

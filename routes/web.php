@@ -23,30 +23,44 @@ Route::get('/kaban/login', [AuthController::class, 'showKabanLogin'])->name('kab
 Route::post('/kaban/login', [AuthController::class, 'kabanLogin']);
 
 // Admin Routes
-Route::prefix('admin')->middleware('auth')->name('admin.')->group(function () {
+Route::prefix('admin')->middleware('auth:web')->name('admin.')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
 
+    // Disposisi Routes
     Route::get('/disposisi', [DisposisiController::class, 'index'])->name('disposisi.index');
     Route::get('/disposisi/create', [DisposisiController::class, 'create'])->name('disposisi.create');
     Route::post('/disposisi', [DisposisiController::class, 'store'])->name('disposisi.store');
-   Route::get('/disposisi/{nomorsurat}/edit', [DisposisiController::class, 'edit'])
-    ->where('nomorsurat', '.*')
-    ->name('disposisi.edit');
-Route::put('/disposisi/{nomorsurat}', [DisposisiController::class, 'update'])
-    ->where('nomorsurat', '.*')
-    ->name('disposisi.update');
-Route::delete('/disposisi/{nomorsurat}', [DisposisiController::class, 'destroy'])
-    ->where('nomorsurat', '.*')
-    ->name('disposisi.destroy');
+    
+    // ✅ TAMBAHKAN ROUTE KIRIM (INI YANG PALING PENTING!)
+    Route::post('/disposisi/kirim/{nomorsurat}', [DisposisiController::class, 'kirim'])
+        ->where('nomorsurat', '.*')
+        ->name('disposisi.kirim');
+    
+    // ✅ OPSIONAL: Route untuk show/detail
+    Route::get('/disposisi/{nomorsurat}', [DisposisiController::class, 'show'])
+        ->where('nomorsurat', '.*')
+        ->name('disposisi.show');
+    
+    Route::get('/disposisi/{nomorsurat}/edit', [DisposisiController::class, 'edit'])
+        ->where('nomorsurat', '.*')
+        ->name('disposisi.edit');
+    Route::put('/disposisi/{nomorsurat}', [DisposisiController::class, 'update'])
+        ->where('nomorsurat', '.*')
+        ->name('disposisi.update');
+    Route::delete('/disposisi/{nomorsurat}', [DisposisiController::class, 'destroy'])
+        ->where('nomorsurat', '.*')
+        ->name('disposisi.destroy');
+    
+    // History Routes
     Route::get('/history', [HistoryController::class, 'index'])->name('history.index');
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
 // Kaban Routes
-Route::prefix('kaban')->middleware('auth')->name('kaban.')->group(function () {
+Route::prefix('kaban')->middleware('auth:kaban')->name('kaban.')->group(function () {
     Route::get('/dashboard', [KabanController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/suratmasuk', [KabanController::class, 'suratmasuk'])->name('suratmasuk');
