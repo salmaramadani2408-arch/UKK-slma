@@ -81,6 +81,11 @@
     box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
+.btn-send-action {
+    background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+    color: white;
+}
+
 .btn-edit-action {
     background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
     color: white;
@@ -124,7 +129,7 @@
             <h6 class="m-0 font-weight-bold text-white">
                 <i class="fas fa-table"></i> Data Disposisi Surat Masuk
                 <small class="float-right" style="font-size: 12px; opacity: 0.9;">
-                    <i class="fas fa-info-circle"></i> Klik baris untuk opsi Edit/Hapus
+                    <i class="fas fa-info-circle"></i> Klik baris untuk opsi Kirim/Edit/Hapus
                 </small>
             </h6>
         </div>
@@ -156,6 +161,7 @@
                             data-skpd="{{ $item->skpd }}"
                             data-perihal="{{ $item->Perihal ?? $item->perihal }}"
                             data-tgl-surat="{{ $item->Tgl_Surat ? \Carbon\Carbon::parse($item->Tgl_Surat)->format('d/m/Y') : '-' }}"
+                            data-kirim-url="{{ route('admin.disposisi.kirim', urlencode($item->nomorsurat)) }}"
                             data-edit-url="{{ route('admin.disposisi.edit', urlencode($item->nomorsurat)) }}"
                             data-delete-url="{{ route('admin.disposisi.destroy', urlencode($item->nomorsurat)) }}">
                             <td class="text-center">{{ $index + 1 }}</td>
@@ -236,11 +242,18 @@
                 <div class="text-center">
                     <p class="text-muted mb-3">Pilih aksi yang ingin dilakukan:</p>
                     
-                    <a href="#" id="btn-edit-modal" class="btn action-btn btn-edit-action mr-2">
+                    <!-- Tombol Kirim -->
+                    <button type="button" id="btn-send-modal" class="btn action-btn btn-send-action mr-2 mb-2">
+                        <i class="fas fa-paper-plane"></i> Kirim
+                    </button>
+                    
+                    <!-- Tombol Edit -->
+                    <a href="#" id="btn-edit-modal" class="btn action-btn btn-edit-action mr-2 mb-2">
                         <i class="fas fa-edit"></i> Edit
                     </a>
                     
-                    <button type="button" id="btn-delete-modal" class="btn action-btn btn-delete-action">
+                    <!-- Tombol Delete -->
+                    <button type="button" id="btn-delete-modal" class="btn action-btn btn-delete-action mb-2">
                         <i class="fas fa-trash"></i> Hapus
                     </button>
                 </div>
@@ -253,6 +266,11 @@
 <form id="delete-form" method="POST" style="display: none;">
     @csrf
     @method('DELETE')
+</form>
+
+<!-- Form Kirim Hidden -->
+<form id="send-form" method="POST" style="display: none;">
+    @csrf
 </form>
 
 @endsection
@@ -295,12 +313,14 @@ $(document).ready(function() {
         var skpd = $row.data('skpd');
         var perihal = $row.data('perihal');
         var tglSurat = $row.data('tgl-surat');
+        var kirimUrl = $row.data('kirim-url');
         var editUrl = $row.data('edit-url');
         var deleteUrl = $row.data('delete-url');
         
         console.log('=== Row Clicked ===');
         console.log('Nomor:', nomor);
         console.log('SKPD:', skpd);
+        console.log('Kirim URL:', kirimUrl);
         console.log('Edit URL:', editUrl);
         console.log('Delete URL:', deleteUrl);
         
@@ -311,13 +331,27 @@ $(document).ready(function() {
         $('#modal-tgl').text(tglSurat);
         
         // Set URL untuk tombol
+        $('#send-form').attr('action', kirimUrl);
+        $('#btn-send-modal').data('nomor', nomor);
+        
         $('#btn-edit-modal').attr('href', editUrl);
+        
         $('#delete-form').attr('action', deleteUrl);
         $('#btn-delete-modal').data('nomor', nomor);
         
         // Tampilkan modal
         console.log('Showing modal...');
         $('#actionModal').modal('show');
+    });
+    
+    // Handle send button
+    $('#btn-send-modal').on('click', function() {
+        var nomor = $(this).data('nomor');
+        
+        if (confirm('Apakah Anda yakin ingin mengirim surat nomor: ' + nomor + ' ke Kaban?')) {
+            console.log('Sending:', nomor);
+            $('#send-form').submit();
+        }
     });
     
     // Handle delete button

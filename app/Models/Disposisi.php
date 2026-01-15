@@ -29,18 +29,17 @@ class Disposisi extends Model
         'nomorsurat',
         'skpd',
         'Tgl_Surat',
-        'Perihal',          // Huruf besar 'P'
+        'Perihal',       
         'Tgl_Diterima',
         'No_Agenda',
         'Sifat',
         'Dokumen',
         'Diteruskan_Ke',
         'status',
-        'dengan_hormat_harap',  // lowercase dengan underscore
-        'catatan'               // lowercase
+        'dengan_hormat_harap',  
+        'catatan'               
     ];
 
-    // Date casting
     protected $casts = [
         'Tgl_Surat' => 'date',
         'Tgl_Diterima' => 'date',

@@ -19,11 +19,11 @@
     font-weight: 600;
     border-color: #BFDBFE !important;
 }
-.badge-status-pending {
+.badge-status-terkirim {
     background-color: #ffc107;
     color: #000;
 }
-.badge-status-dikaban {
+.badge-status-diterima {
     background-color: #17a2b8;
     color: #fff;
 }
@@ -42,8 +42,8 @@
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-success">Data Surat Masuk</h6>
         <div>
-            <span class="badge badge-status-pending mr-2">Pending</span>
-            <span class="badge badge-status-dikaban mr-2">Di Kaban</span>
+            <span class="badge badge-status-terkirim mr-2">Terkirim</span>
+            <span class="badge badge-status-diterima mr-2">Diterima</span>
             <span class="badge badge-status-selesai">Selesai</span>
         </div>
     </div>
@@ -72,15 +72,19 @@
                         <td>{{$no++}}</td>
                         <td><strong>{{$item->nomorsurat}}</strong></td>
                         <td>{{$item->skpd}}</td>
-                        <td>{{$item->Tgl_Surat}}</td>
+                        <td>{{ \Carbon\Carbon::parse($item->Tgl_Surat)->format('d/m/Y') }}</td>
                         <td>{{$item->Perihal}}</td>
-                        <td>{{$item->Tgl_Diterima}}</td>                                  
+                        <td>{{ \Carbon\Carbon::parse($item->Tgl_Diterima)->format('d/m/Y') }}</td>                                  
                         <td>{{$item->No_Agenda}}</td>                                 
                         <td>
-                            @if($item->Sifat == 'Segera')
+                            @if($item->Sifat == 'Sangat Segera')
                                 <span class="badge badge-danger">{{$item->Sifat}}</span>
+                            @elseif($item->Sifat == 'Segera')
+                                <span class="badge badge-warning">{{$item->Sifat}}</span>
                             @elseif($item->Sifat == 'Biasa')
                                 <span class="badge badge-secondary">{{$item->Sifat}}</span>
+                            @elseif($item->Sifat == 'Rahasia')
+                                <span class="badge badge-dark">{{$item->Sifat}}</span>
                             @else
                                 <span class="badge badge-info">{{$item->Sifat}}</span>
                             @endif
@@ -93,10 +97,10 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            @if($item->status == 'pending')
-                                <span class="badge badge-status-pending">Pending</span>
-                            @elseif($item->status == 'di_kaban')
-                                <span class="badge badge-status-dikaban">Di Kaban</span>
+                            @if($item->status == 'terkirim')
+                                <span class="badge badge-status-terkirim">Terkirim</span>
+                            @elseif($item->status == 'diterima')
+                                <span class="badge badge-status-diterima">Diterima</span>
                             @elseif($item->status == 'selesai')
                                 <span class="badge badge-status-selesai">Selesai</span>
                             @else
@@ -104,18 +108,24 @@
                             @endif
                         </td>
                         <td class="text-center">
-                            <a href="{{ route('kaban.suratmasuk.show', $item->nomorsurat) }}" 
+                            <!-- ✅ Tombol Detail dengan encode -->
+                            <a href="{{ route('kaban.suratmasuk.show', urlencode($item->nomorsurat)) }}" 
                                title="Detail & Disposisi" 
                                class="btn btn-info btn-sm">
                                 <i class="fas fa-eye"></i> Detail
                             </a>
-                            @if($item->status != 'selesai')
-                                <a href="{{ route('kaban.suratmasuk.edit', $item->nomorsurat) }}" 
-                                   title="Edit Disposisi" 
-                                   class="btn btn-warning btn-sm">
-                                    <i class="fas fa-edit"></i>
+                            
+                            <!-- ✅ Tombol Lihat PDF langsung -->
+                            @if($item->Dokumen)
+                                <a href="{{ asset('uploads/disposisi/' . $item->Dokumen) }}" 
+                                   target="_blank"
+                                   title="Lihat PDF" 
+                                   class="btn btn-danger btn-sm">
+                                    <i class="fas fa-file-pdf"></i> PDF
                                 </a>
                             @endif
+                            
+                            <!-- ✅ TOMBOL EDIT DIHAPUS -->
                         </td>
                     </tr>
                     @empty
