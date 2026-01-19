@@ -24,7 +24,7 @@ email=kaban@admin.com
 password=kaban123
 
 ## **Alat yang digunakan**
--Laravel 12
+- Laravel 12
 - CSS
 - Javascript
 - Template SB 2 admin - boostrap
