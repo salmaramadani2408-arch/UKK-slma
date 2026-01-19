@@ -16,5 +16,9 @@ Website Disposisi Digital
   - Preview Dokumen
   - Halaman Disposisi (Memberi catatan, Menentukan Pengiriman surat ke bidang yang sesuai)
 ### **Password dan Email**
-
-
+#### **Admin**
+email= admin@admin.com
+password= admin123
+#### **Kepala Badan (kaban)**
+email=kaban@admin.com
+password=kaban123
